@@ -555,19 +555,21 @@ Authorization: Bearer <your-jwt-token>
 
 # NetPositionNetWise
 
-## Overview of NetPosition_NetWiseV3 API
-The **NetPosition_NetWiseV3** API provides detailed net position data for a client across multiple exchanges and product types. It aggregates positions in equity and commodity segments, delivering net quantities, average rates, and related metrics in a structured response.
+---
+
+## 🔹 API Overview
+The **NetPosition_NetWiseV3** API delivers consolidated net position data for a client across multiple exchanges and segments, helping traders compute intraday and delivery-wise positions with essential profit/loss metrics.
 
 ---
 
-## API Endpoint
-```
+## 📌 Endpoint
+```http
 POST https://Openapi.5paisa.com/VendorsAPI/Service1.svc/V3/NetPositionNetWise
 ```
+
 ---
 
-## Request Structure
-
+## 📤 Request Format
 ```json
 {
   "head": {
@@ -577,130 +579,54 @@ POST https://Openapi.5paisa.com/VendorsAPI/Service1.svc/V3/NetPositionNetWise
     "ClientCode": "string"
   }
 }
-````
-
-### Request Parameters
-
-| Field              | Type   | Description                         |
-| ------------------ | ------ | ----------------------------------- |
-| `head.key`         | string | Authentication/authorization key    |
-| `body.ClientCode`  | string | Unique client identifier            |
-
----
-
-## Response Structure
-
-```json
-{
-  "head": {
-    "responseCode": "string",
-    "status": int,
-    "statusDescription": "string"
-  },
-  "body": {
-    "Status": int,
-    "Message": "string",
-    "NetPositions": [
-      {
-        "Exch": "string",
-        "ExchType": "string",
-        "ScripCode": int,
-        "ScripName": "string",
-        "BuyQty": int,
-        "SellQty": int,
-        "NetQty": int,
-        "AvgRate": double,
-        "LastRate": double,
-        "Multiplier": double,
-        "Product": "string",
-        "AdditionalFields": "..."
-      }
-    ]
-  }
-}
 ```
 
-### Response Fields Description
-
-| Field                    | Type   | Description                                               |
-| ------------------------ | ------ | --------------------------------------------------------- |
-| `head.responseCode`      | string | Code representing the API response                        |
-| `head.status`            | int    | Status code (0 for success, other values indicate errors) |
-| `head.statusDescription` | string | Text description of the status                            |
-| `body.Status`            | int    | Business status code                                      |
-| `body.Message`           | string | Response message or error description                     |
-| `body.NetPositions`      | array  | List of net position details for various scrips           |
-
-Each element in `NetPositions` includes:
-
-| Field              | Type   | Description                                             |
-| ------------------ | ------ | ------------------------------------------------------- |
-| `Exch`             | string | Exchange code (e.g., N for NSE, M for MCX)              |
-| `ExchType`         | string | Exchange segment/type                                   |
-| `ScripCode`        | int    | Unique code identifying the trading instrument          |
-| `ScripName`        | string | Name of the trading instrument                          |
-| `BuyQty`           | int    | Total quantity bought                                   |
-| `SellQty`          | int    | Total quantity sold                                     |
-| `NetQty`           | int    | Net quantity (BuyQty - SellQty plus adjustments)        |
-| `AvgRate`          | double | Average rate of the position                            |
-| `LastRate`         | double | Last traded price                                       |
-| `Multiplier`       | double | Multiplier used for value calculation                   |
-| `Product`          | string | Product type indicator (e.g., Delivery, Intraday)       |
-| `AdditionalFields` | varies | Other position-related metrics (e.g., BodQty, BuyValue) |
+### 🔸 Request Parameters
+| Field           | Type   | Description                          |
+|----------------|--------|--------------------------------------|
+| `head.key`     | string | Authorization token key              |
+| `body.ClientCode` | string | Unique identifier for the client     |
 
 ---
 
-## Status Codes
-
-| Code | Meaning                         |
-| ---- | ------------------------------- |
-| 0    | Success                         |
-| 1    | No records found                |
-| 2    | Validation error                |
-| 9    | Invalid session or unauthorized |
-
----
-
-## Example Request
-
-```json
-{
-  "head": {
-    "key": "your_auth_key"
-  },
-  "body": {
-    "ClientCode": "CLIENT1234"
-  }
-}
-```
-
----
-
-## Example Successful Response
-
+## 📥 Response Format (Success)
 ```json
 {
   "head": {
     "responseCode": "5PNPNWV3",
-    "status": 0,
+    "status": "0",
     "statusDescription": "Success"
   },
   "body": {
     "Status": 0,
-    "Message": "Success",
-    "NetPositions": [
+    "Message": "",
+    "NetPositionDetail": [
       {
         "Exch": "N",
-        "ExchType": "Y",
-        "ScripCode": 12345,
-        "ScripName": "ABC Ltd",
-        "BuyQty": 100,
-        "SellQty": 50,
-        "NetQty": 50,
-        "AvgRate": 150.25,
-        "LastRate": 152.00,
+        "ExchType": "D",
+        "ScripCode": 62385,
+        "ScripName": "NIFTY 26 Jun 2025 CE 24750.00",
+        "BuyQty": 75,
+        "BuyAvgRate": 316.1,
+        "BuyValue": 23707.5,
+        "SellQty": 75,
+        "SellAvgRate": 315.95,
+        "SellValue": 23696.25,
+        "NetQty": 0,
+        "BookedPL": -11.25,
+        "LTP": 318.6,
+        "OrderFor": "D",
+        "BodQty": 75,
+        "PreviousClose": 421.05,
+        "MTOM": 0,
         "Multiplier": 1,
-        "Product": "D"
+        "AvgRate": 0,
+        "CFQty": 0,
+        "AvgCFQty": 0,
+        "LotSize": 75,
+        "ConvertedQty": 0,
+        "isPhysicalDelivery": false,
+        "AvgCFPrice": 0
       }
     ]
   }
@@ -709,25 +635,113 @@ Each element in `NetPositions` includes:
 
 ---
 
-## Notes
+## ❌ Failure Response Examples
+### 🔸 Invalid Session
+```json
+{
+  "head": {
+    "responseCode": "5PNPNWV3",
+    "status": "0",
+    "statusDescription": "Invalid Session"
+  },
+  "body": {
+    "Status": 9,
+    "Message": "Invalid Session",
+    "NetPositionDetail": []
+  }
+}
+```
 
-* Authorization is required; requests without valid authorization will be rejected.
-* The API aggregates net positions by product type and exchange.
-* If no data is found for the client, the response will indicate "No record found."
-* Input validation is performed on request headers and body fields.
-* The API supports multiple product types including Delivery (D), Intraday (I), and others.
+### 🔸 Invalid Head Parameters
+```json
+{
+  "head": {
+    "responseCode": "5PNPNWV3",
+    "status": "2",
+    "statusDescription": "Invalid head parameters."
+  },
+  "body": null
+}
+```
+
+---
+
+## 🧾 Field Reference: NetPositionDetail
+| Field              | Type    | Description                                               |
+|--------------------|---------|-----------------------------------------------------------|
+| `Exch`             | string  | Exchange code (e.g., N = NSE, B = BSE, M = MCX)           |
+| `ExchType`         | string  | Segment code (e.g., D = Derivatives, C = Cash, U = Currency) |
+| `ScripCode`        | int     | Unique code identifying the traded instrument             |
+| `ScripName`        | string  | Full name of the instrument                               |
+| `BuyQty`           | int     | Quantity bought                                           |
+| `BuyAvgRate`       | float   | Average rate of bought quantity                           |
+| `BuyValue`         | float   | Total value of buy trades                                 |
+| `SellQty`          | int     | Quantity sold                                             |
+| `SellAvgRate`      | float   | Average rate of sold quantity                             |
+| `SellValue`        | float   | Total value of sell trades                                |
+| `NetQty`           | int     | Net open position quantity                                |
+| `BookedPL`         | float   | Profit/Loss realized on closed quantity                   |
+| `LTP`              | float   | Last Traded Price                                         |
+| `OrderFor`         | char    | Order type (D=Delivery, I=Intraday, S=BO, C=CO)           |
+| `BodQty`           | int     | Quantity carried forward from previous day                |
+| `PreviousClose`    | float   | Previous day's closing price                              |
+| `MTOM`             | float   | Mark-to-Market P&L                                        |
+| `Multiplier`       | float   | Multiplier used to scale position values                 |
+| `AvgRate`          | float   | Final average holding price                               |
+| `CFQty`            | float   | Carried Forward Quantity                                  |
+| `AvgCFQty`         | float   | Average CF price                                          |
+| `LotSize`          | float   | Lot size for futures/options                              |
+| `ConvertedQty`     | int     | Quantity converted (e.g., physical delivery)              |
+| `isPhysicalDelivery` | bool  | Indicates if physical delivery applies                    |
+| `AvgCFPrice`       | float   | Average carried forward price                             |
+
+---
+
+## ✅ Status Codes
+| Code | Description                         |
+|------|-------------------------------------|
+| 0    | Success                             |
+| 1    | No record found                     |
+| 2    | Invalid head/body or parameters     |
+| 9    | Invalid Session                     |
+
+---
+
+## 🧪 Sample cURL Request
+```bash
+curl --location 'https://Openapi.5paisa.com/VendorsAPI/Service1.svc/V3/NetPositionNetWise' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <access_token>' \
+--data '{
+    "head": {
+        "key": "<auth_key>"
+    },
+    "body": {
+        "ClientCode": "<client_code>"
+    }
+}'
+```
+
+---
+
+## 🧠 Integration Tips
+- Use this API to show a snapshot of open positions and realized P&L in your trading assistant.
+- Supports both equity and derivatives segments.
+- Run this every few seconds (with caution to rate limits) for real-time dashboards.
+- Pair with **OrderBookV2** or **HoldingsV3** for a complete client view.
 
 ---
 
 
 
-## Best Practices
-
-* Use secure storage and transmission for authorization tokens.
-* Always check response status before processing data.
-* Handle empty or partial data scenarios gracefully.
+## 📚 Notes
+- LTP and MTM can be used for live P&L computation.
+- Ideal for tracking both intraday and delivery positions.
+- Realized P&L (`BookedPL`) is included for completed legs.
+- Response includes optional field `isPhysicalDelivery` for F&O expiry settlement.
 
 ---
+
 # Holding
 
 ## Overview Holding_V4 API
