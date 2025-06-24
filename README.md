@@ -13,8 +13,6 @@
 - [NetPositionNetWise](#netpositionnetwise)  
 - [Holding](#holding)  
 
-### 5. 💰 Margin  
-- [Margin](#margin)  
 
 ---
 
@@ -558,7 +556,7 @@ Authorization: Bearer <your-jwt-token>
 ---
 
 ## 🔹 API Overview
-The **NetPosition_NetWiseV3** API delivers consolidated net position data for a client across multiple exchanges and segments, helping traders compute intraday and delivery-wise positions with essential profit/loss metrics.
+The **NetPosition_NetWiseV3** API delivers consolidated net position data for a client across multiple exchanges and segments, helping traders compute intraday and delivery-wise positions with essential profit/loss metrics including realized PnL.
 
 ---
 
@@ -680,7 +678,7 @@ POST https://Openapi.5paisa.com/VendorsAPI/Service1.svc/V3/NetPositionNetWise
 | `SellAvgRate`      | float   | Average rate of sold quantity                             |
 | `SellValue`        | float   | Total value of sell trades                                |
 | `NetQty`           | int     | Net open position quantity                                |
-| `BookedPL`         | float   | Profit/Loss realized on closed quantity                   |
+| `BookedPL`         | float   | Profit/Loss realized on closed quantity      (Realized P&L)             |
 | `LTP`              | float   | Last Traded Price                                         |
 | `OrderFor`         | char    | Order type (D=Delivery, I=Intraday, S=BO, C=CO)           |
 | `BodQty`           | int     | Quantity carried forward from previous day                |
@@ -949,175 +947,5 @@ curl --location 'https://Openapi.5paisa.com/VendorsAPI/Service1.svc/V4/Holding' 
 
 ---
 
-# Margin
-
-## Overview of MarginV4 API
-
-The `MarginV4` API provides detailed margin information for a specified client code. It retrieves equity and mutual fund margin details by querying the backend database and returning structured financial data. This API is essential for stock trading platforms needing to check real-time margin status for users.
-
----
-
-## Endpoint
-
-```
-POST https://Openapi.5paisa.com/VendorsAPI/Service1.svc/V4/Margin
-```
-
----
-
-## Authentication
-
-- Requires Bearer Token authorization.
-- Include the token in the `Authorization` header as:  
-  `Authorization: Bearer <JWT_Token>`
-- Cookie header may be required with valid session cookie:  
-  `Cookie: 5paisacookie=<session_token>`
-
----
-
-## Request Headers
-
-| Header           | Description                 | Required |
-|------------------|-----------------------------|----------|
-| Content-Type     | Must be `application/json`  | Yes      |
-| Authorization    | Bearer JWT token            | Yes      |
-| Cookie           | Session cookie              | Optional |
-
----
-
-## Request Body
-
-```json
-{
-  "head": {
-    "key": "dVOtp6A6mRzrBO6SdAs7Vf"
-  },
-  "body": {
-    "ClientCode": "50"
-  }
-}
-```
-
-| Parameter  | Type   | Description                           | Required |
-|------------|--------|-------------------------------------|----------|
-| head.key   | string | API access key                      | Yes      |
-| body.ClientCode | string | Unique client identifier for margin data | Yes      |
-
----
-
-## cURL Example
-
-```bash
-curl --location 'https://Openapi.5paisa.com/VendorsAPI/Service1.svc/V4/Margin' \
---header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' \
---header 'Cookie: 5paisacookie=kmfrozkfxvest' \
---data '{
-    "head": {
-        "key": "dfgh34567fgh
-    },
-    "body": {
-        "ClientCode": "456789"
-    }
-}'
-```
-
----
-
-## Response Body
-
-```json
-{
-  "head": {
-    "responseCode": "5PMarginV4",
-    "status": 0,
-    "statusDescription": "Success"
-  },
-  "body": {
-    "ClientCode": "50",
-    "Status": 0,
-    "Message": "",
-    "EquityMargin": [
-      {
-        "AdhocMargin": 0,
-        "CollateralValueAfterHairCut": 0,
-        "NetAvailableMargin": 0,
-        "MarginUtilized": 0,
-        "TotalCollateralValue": 0,
-        "DerivativeMargin": 0,
-        "Ledgerbalance": 0,
-        "DPFreeStockValue": 0,
-        "GrossHoldingValue": 0,
-        "GrossHoldingValueCoverPercentage": 0,
-        "HairCut": 0,
-        "MarginBlockedforOpenPostion_Cash": 0,
-        "MarginBlockedforOpenPostion_Collateral": 0,
-        "MarginBlockedforPendingOrder_Cash": 0,
-        "MarginBlockedforPendingOrder_Collateral": 0,
-        "MFCollateralValueAfterHaircut": 0,
-        "OptionsPremium": 0,
-        "FundsWithdrawal": 0,
-        "MarginBlockedForPendingOrders": 0,
-        "FundsPayln": 0,
-        "TodaysLoss": 0,
-        "Unsettled_Credits": 0
-      }
-    ],
-    "MFMargin": [
-      {
-        "MFCollateralValue": 0,
-        "MFFreeStockValue": 0,
-        "MFHaircutValue": 0
-      }
-    ],
-    "TimeStamp": "2025-05-19T12:00:00"
-  }
-}
-```
-
----
-
-## Response Fields Description
-
-| Field                             | Type     | Description                                 |
-|----------------------------------|----------|---------------------------------------------|
-| head.responseCode                | string   | Internal API request code                    |
-| head.status                      | int      | Status code (0 = Success, others indicate error) |
-| head.statusDescription           | string   | Status message                              |
-| body.ClientCode                 | string   | Client code reflected back                  |
-| body.Status                     | int      | Business logic status (0 = Success)          |
-| body.Message                    | string   | Error or success message                     |
-| body.EquityMargin               | array    | Array of equity margin details               |
-| body.EquityMargin[].AdhocMargin | decimal  | Adhoc margin amount                           |
-| body.EquityMargin[].CollateralValueAfterHairCut | decimal | Collateral value after haircut               |
-| body.EquityMargin[].NetAvailableMargin | decimal | Net margin available                          |
-| ...                            | ...      | Other margin fields as shown above           |
-| body.MFMargin                  | array    | Array of mutual fund margin details          |
-| body.MFMargin[].MFCollateralValue | decimal | Mutual fund collateral value                   |
-| body.MFMargin[].MFFreeStockValue | decimal  | Mutual fund free stock value                   |
-| body.MFMargin[].MFHaircutValue   | decimal  | Mutual fund haircut value                      |
-| body.TimeStamp                 | datetime | Timestamp of the response                     |
-
----
-
-## Error Handling
-
-| Status Code | Meaning                  | Description                    |
-|-------------|--------------------------|--------------------------------|
-| 9           | Invalid Session          | Authentication failed or token expired |
-| 2           | Input Validation Error   | Missing or invalid ClientCode or head key |
-| 1           | Data Not Found           | No margin info available for the ClientCode |
-
----
-
-
-## Additional Notes
-
-- The API supports multi-layer validation: header key, authorization JWT, and client session cookies.
-- The margin data returned is consolidated from multiple tables and stored procedures.
-- This version (V4) enhances margin details compared to earlier versions, including derivatives and mutual fund margins.
-- Always ensure your client code is validated to avoid unauthorized data access.
-
----
 
 ---
